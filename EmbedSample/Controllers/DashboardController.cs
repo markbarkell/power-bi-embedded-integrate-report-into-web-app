@@ -19,10 +19,23 @@ namespace paas_demo.Controllers
 
         public DashboardController()
         {
-            this.workspaceCollection = ConfigurationManager.AppSettings["powerbi:WorkspaceCollection"];
-            this.workspaceId = ConfigurationManager.AppSettings["powerbi:WorkspaceId"];
-            this.accessKey = ConfigurationManager.AppSettings["powerbi:AccessKey"];
-            this.apiUrl = ConfigurationManager.AppSettings["powerbi:ApiUrl"];
+            // At one point, the code was directly reading the web.config file for the settings.
+            // Given that I want to help ensure that I don't put private keys up within a web.config file
+            // I have made it so that the code reads environmental variables.  Nevertheless, even this pattern
+            // is not suitable for production code.   The reason is that the settings should be passed in
+            // by dependency injection.  The implementation of the dependency injection might actually do reading
+            // of the enviornment in more idealized code.
+            // 
+            // However, this code is code existing only for the purpose of understanding
+            // how to program to use Microsoft's Power BI Embedded.   
+            //
+            // So, this comment is just telling the reader
+            // that the code ought to be structured diffferently if doing a project that is not just a sample.
+            // TODO, perhaps.
+            this.workspaceCollection = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:WorkspaceCollection"]);
+            this.workspaceId = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:WorkspaceId"]);
+            this.accessKey = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:AccessKey"]);
+            this.apiUrl = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:ApiUrl"]);
         }
 
         public ActionResult Index()
@@ -64,6 +77,19 @@ namespace paas_demo.Controllers
             }
         }
 
+        // There are actually at least two ways of going about this which would be unit testable.
+        // One way would be to make this an abstract method and provide an implementation in
+        // a concrete class.  This would be an application of the Template Method Design Pattern.
+        //
+        // The other way would be to use Dependency Injection when constructing the controller.
+        // the dependency injection would have provided an IPowerBIClient valid with a lifecycle
+        // of the Http Request Cycle.
+        //
+        // Of course, this code was written as a sample on how to use Microsoft Power BI Embedded.
+        // So, applying more SOLID principles and unit testing might confuse the primary purpose.
+        // And of course, this sample code is not meant to be used for a production environment unchanged
+        // and unvalidated.
+        // TODO, perhaps.
         private IPowerBIClient CreatePowerBIClient()
         {
             var credentials = new TokenCredentials(accessKey, "AppKey");
