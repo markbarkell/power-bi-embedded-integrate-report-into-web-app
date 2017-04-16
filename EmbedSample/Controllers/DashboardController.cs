@@ -32,10 +32,14 @@ namespace paas_demo.Controllers
             // So, this comment is just telling the reader
             // that the code ought to be structured diffferently if doing a project that is not just a sample.
             // TODO, perhaps.
-            this.workspaceCollection = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:WorkspaceCollection"]);
-            this.workspaceId = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:WorkspaceId"]);
-            this.accessKey = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:AccessKey"]);
-            this.apiUrl = Environment.GetEnvironmentVariable(ConfigurationManager.AppSettings["powerbi:ApiUrl"]);
+            string webConfigWorkspaceCollectionKey = ConfigurationManager.AppSettings["powerbi:WorkspaceCollection"];
+            this.workspaceCollection = Environment.GetEnvironmentVariable(webConfigWorkspaceCollectionKey);
+            string webConfigWorkspaceIdKey = ConfigurationManager.AppSettings["powerbi:WorkspaceId"];
+            this.workspaceId = Environment.GetEnvironmentVariable(webConfigWorkspaceIdKey);
+            string webConfigAccessKeyKey = ConfigurationManager.AppSettings["powerbi:AccessKey"];
+            this.accessKey = Environment.GetEnvironmentVariable(webConfigAccessKeyKey);
+            string webConfigApiUrlKey = ConfigurationManager.AppSettings["powerbi:ApiUrl"];
+            this.apiUrl = Environment.GetEnvironmentVariable(webConfigApiUrlKey);
         }
 
         public ActionResult Index()
