@@ -39,7 +39,7 @@ namespace paas_demo.Controllers
             string webConfigAccessKeyKey = ConfigurationManager.AppSettings["powerbi:AccessKey"];
             this.accessKey = Environment.GetEnvironmentVariable(webConfigAccessKeyKey);
             string webConfigApiUrlKey = ConfigurationManager.AppSettings["powerbi:ApiUrl"];
-            this.apiUrl = Environment.GetEnvironmentVariable(webConfigApiUrlKey);
+            this.apiUrl = webConfigApiUrlKey;
         }
 
         public ActionResult Index()
