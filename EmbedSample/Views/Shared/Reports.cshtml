@@ -10,7 +10,25 @@
     }
 }
 
+
 <li class="@classNames">
+
+    <div class="nav navbar-nav">
+        @Html.LabelFor(m => m.UserName, "The User Name", new { style = "color: white" })
+        <br />
+        @Html.TextBoxFor(m => m.UserName)
+    </div>
+    <br />
+    <div>
+        @Html.LabelFor(m => m.RolesCSV, "The Comma Seperated Role Names", new { style = "color: white" })
+        <br />
+        @Html.TextBoxFor(m => m.RolesCSV)
+    </div>
+    <br />
+
+
+
+
     <a data-toggle="collapse" href="#reports-nav">
         <span class="icon fa fa-bar-chart"></span><span class="title">Reports</span>
     </a>
@@ -22,7 +40,13 @@
                 {
                     var reportClass = Request.QueryString["reportId"] == report.Id ? "active" : "";
                     <li class="@reportClass">
-                        @Html.ActionLink(report.Name, "Report", new { reportId = report.Id })
+                        @Html.ActionLink(report.Name, "Report",
+                            new {
+                               reportId = report.Id,
+                               userName = Model.UserName,
+                               rolesCSV = Model.RolesCSV
+                            }
+                       )
                     </li>
                 }
             </ul>

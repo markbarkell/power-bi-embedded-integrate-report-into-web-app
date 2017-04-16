@@ -63,13 +63,26 @@ namespace paas_demo.Controllers
             }
         }
 
-        public async Task<ActionResult> Report(string reportId)
+        public async Task<ActionResult> Report(string reportId, string userName, string rolesCSV)
         {
             using (var client = this.CreatePowerBIClient())
             {
                 var reportsResponse = await client.Reports.GetReportsAsync(this.workspaceCollection, this.workspaceId);
                 var report = reportsResponse.Value.FirstOrDefault(r => r.Id == reportId);
-                var embedToken = PowerBIToken.CreateReportEmbedToken(this.workspaceCollection, this.workspaceId, report.Id);
+
+                PowerBIToken embedToken = null;
+
+                var userNameResolve = string.IsNullOrWhiteSpace(userName) ? null : userName.Trim();
+                var roles = string.IsNullOrWhiteSpace(rolesCSV) ? null : rolesCSV.Split(new char[] { ',' }).Select(r => r.Trim());
+                embedToken = PowerBIToken.CreateReportEmbedToken(
+                    workspaceCollectionName: this.workspaceCollection, 
+                    workspaceId: this.workspaceId, 
+                    reportId: report.Id, 
+                    username: userNameResolve, 
+                    roles: roles
+                    );
+                
+                
 
                 var viewModel = new ReportViewModel
                 {

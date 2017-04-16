@@ -163,3 +163,6 @@ node_modules/
 
 # Bower components
 bower_components/
+
+# The Visual Studio jfm file that has something that changes not needing to be committed.
+*.jfm
