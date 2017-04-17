@@ -56,13 +56,32 @@ namespace paas_demo.Controllers
 
                 var viewModel = new ReportsViewModel
                 {
-                    Reports = reportsResponse.Value.ToList()
+                    Reports = reportsResponse.Value.ToList(),
+                    // TODO perhaps,  using the Session is very much the lazy man's way.   Of course,
+                    // it limits the ability for throughput with some type of server farm.
+                    // Yet, all of this code is meant as sample
+                    // code to understand Microsoft Power BI Embedded in the content of ASP.NET MVC.
+                    // So, I don't feel too bad.
+                    UserName = Session["UserName"] as string,
+                    RolesCSV = Session["RolesCSV"] as string
                 };
 
                 return PartialView(viewModel);
             }
         }
 
+        [ValidateAntiForgeryToken]
+        public ActionResult SetRoles(ReportsViewModel rvm)
+        {
+            // TODO perhaps,  using the Session is very much the lazy man's way.   Of course,
+            // it limits the ability for throughput with some type of server farm.
+            // Yet, all of this code is meant as sample
+            // code to understand Microsoft Power BI Embedded in the content of ASP.NET MVC.
+            // So, I don't feel too bad.
+            Session["UserName"] = rvm.UserName;
+            Session["RolesCSV"] = rvm.RolesCSV;
+            return RedirectToAction("Index");
+        }
         public async Task<ActionResult> Report(string reportId, string userName, string rolesCSV)
         {
             using (var client = this.CreatePowerBIClient())
@@ -92,7 +111,7 @@ namespace paas_demo.Controllers
 
                 return View(viewModel);
             }
-        }
+        } 
 
         // There are actually at least two ways of going about this which would be unit testable.
         // One way would be to make this an abstract method and provide an implementation in
