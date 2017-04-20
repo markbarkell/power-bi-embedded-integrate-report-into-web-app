@@ -229,6 +229,7 @@ namespace ProvisionSample
 
             if ((extras & EnsureExtras.Azure) == EnsureExtras.Azure)
             {
+                subscriptionId = string.IsNullOrWhiteSpace(subscriptionId) ? Environment.GetEnvironmentVariable("AzureSubscriptionId") : null;
                 subscriptionId = userInput.EnsureParam(subscriptionId, "Azure Subscription Id", onlyFillIfEmpty: true);
                 resourceGroup = userInput.EnsureParam(resourceGroup, "Azure Resource Group", onlyFillIfEmpty: true);
             }
@@ -349,6 +350,19 @@ namespace ProvisionSample
             EnsureBasicParams(EnsureExtras.WorkspaceCollection | EnsureExtras.WorspaceId | EnsureExtras.DatasetId, forceEntering: EnsureExtras.DatasetId);
             string connectionString = userInput.EnsureParam(null, "Connection String", onlyFillIfEmpty: false);
 
+            if (connectionString.StartsWith("env:"))
+            {
+                try
+                {
+                    connectionString = connectionString.Split(':')[1];
+                    connectionString = Environment.GetEnvironmentVariable(connectionString);
+                } catch (Exception)
+                {
+                    Console.WriteLine("Something is wrong with the connection string");
+                    connectionString = null;
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 await UpdateConnectionString(workspaceCollectionName, workspaceId, datasetId, connectionString);
@@ -367,9 +381,36 @@ namespace ProvisionSample
             EnsureBasicParams(EnsureExtras.WorkspaceCollection | EnsureExtras.WorspaceId | EnsureExtras.DatasetId, forceEntering: EnsureExtras.DatasetId);
             var chachedUsername = username;
             username = userInput.EnsureParam(username, "Username", onlyFillIfEmpty: false);
+
+            if (username.StartsWith("env:"))
+            {
+                try
+                {
+                    username = username.Split(':')[1];
+                    username = Environment.GetEnvironmentVariable(username);
+                } catch (Exception)
+                {
+                    Console.WriteLine("Something is wrong with the username");
+                    username = null;
+                }
+            }
+
             if (username != chachedUsername)
             {
                 password = userInput.EnsureParam(null, "Password", onlyFillIfEmpty: false, isPassword: true);
+            }
+
+            if (password.StartsWith("env:"))
+            {
+                try
+                {
+                    password = password.Split(':')[1];
+                    password = Environment.GetEnvironmentVariable(password);
+                } catch (Exception)
+                {
+                    Console.WriteLine("Something is wrong with the password");
+                    password = null;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
